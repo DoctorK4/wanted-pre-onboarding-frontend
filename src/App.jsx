@@ -4,6 +4,7 @@ import SignIn from './pages/signIn';
 import SignUp from './pages/signUp';
 import ToDo from './pages/toDo';
 import NotFound from './pages/notFound';
+import Navbar from "./components/navbar";
 
 function App() {
   const token = localStorage.getItem('token');
@@ -11,22 +12,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/signin">Signin</Link>
-            </li>
-            <li>
-              <Link to="/signup">Signup</Link>
-            </li>
-            <li>
-              <Link to="/todo">Todo</Link>
-            </li>
-          </ul>
-        </nav>
+        <Navbar/>
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/signup" element={ token ? <Navigate to="/todo"/> : <SignUp />}></Route>
