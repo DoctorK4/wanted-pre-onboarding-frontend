@@ -45,6 +45,7 @@ function SignUp (){
     })
     .then((res) => {
       console.log(res);
+      window.location.replace("/signin")
     })
     .catch((err) => console.log(err));
   }
