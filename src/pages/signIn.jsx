@@ -8,8 +8,8 @@ const api = axios.create({
     'Content-Type' : 'application/json',
   },
 })
-
-function SignIn (){
+ 
+function SignIn(){
   const [ validEmail, setValidEmail ] = useState(false);
   const [ validPassword, setValidPassword ] = useState(false);
   const [ email, setEmail ] = useState('');
@@ -45,6 +45,9 @@ function SignIn (){
     })
     .then((res) => {
       console.log(res);
+      const token = res.data.access_token
+      window.localStorage.setItem('token', token);
+      window.location.replace("/todo");
     })
     .catch((err) => console.log(err));
   }
