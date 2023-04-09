@@ -3,10 +3,10 @@ import { useState } from "react"
 export default function ToDo({index, inputValue, toDos, setToDos}) {
   const [edit, setEdit] = useState(false);
   const [newToDo, setNewToDo ] = useState(inputValue);
-  const editToDo = () => {
-    
+  const editToDo = (index) => {
+    toDos[index] = newToDo;
+    setToDos([...toDos]);
     setEdit(false);
-    setNewToDo(inputValue);
   }
 
   const deleteToDo = (index) => {
@@ -20,8 +20,8 @@ export default function ToDo({index, inputValue, toDos, setToDos}) {
       <li>
         { !edit ? 
         <>
-        <label>
-          <input type="checkbox" />
+        <label htmlFor="addToDo">
+          <input type="checkbox" id="addToDo"/>
           <span>{inputValue}</span>
         </label>
         <button data-testid="modify-button" onClick={()=>setEdit(true)}>수정</button>
@@ -29,8 +29,8 @@ export default function ToDo({index, inputValue, toDos, setToDos}) {
         </>
           : 
        
-        <form onSubmit={editToDo}>
-          <input data-testid="modify-input" value={newToDo} onChange={(e)=>setNewToDo(e.target.value)}/>
+        <form onSubmit={()=>editToDo(index)} id="editForm">
+          <input data-testid="modify-input" value={newToDo} form="editForm" onChange={(e)=>setNewToDo(e.target.value)}/>
           <button data-testid="submit-button" type="submit">제출</button>
           <button data-testid="cancel-button" type="button" onClick={()=>setEdit(false)}>취소</button>
         </form> 
