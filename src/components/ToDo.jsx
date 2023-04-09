@@ -15,6 +15,11 @@ export default function ToDo({index, inputValue, toDos, setToDos}) {
     });
   }
 
+  const cancelEdit = () => {
+    setEdit(false)
+    setNewToDo(inputValue);
+  }
+
   return (
     <>
       <li>
@@ -32,7 +37,7 @@ export default function ToDo({index, inputValue, toDos, setToDos}) {
         <form onSubmit={()=>editToDo(index)} id="editForm">
           <input data-testid="modify-input" value={newToDo} form="editForm" onChange={(e)=>setNewToDo(e.target.value)}/>
           <button data-testid="submit-button" type="submit">제출</button>
-          <button data-testid="cancel-button" type="button" onClick={()=>setEdit(false)}>취소</button>
+          <button data-testid="cancel-button" type="button" onClick={()=>cancelEdit()}>취소</button>
         </form> 
         }
       </li>
