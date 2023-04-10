@@ -1,14 +1,36 @@
 import { useState } from 'react'
 import ToDo from '../components/ToDo';
+import axios from "axios";
+
+const token = localStorage.getItem('token');
+const host = 'https://www.pre-onboarding-selection-task.shop/';
+const api = axios.create({
+  baseURL: host,
+  headers: {
+    'Content-Type' : 'application/json',
+    Authorization : `Bearer ${token}`,
+  },
+})
 
 function ToDoList () {
   const [inputValue, setInputValue] = useState('');
   const [toDos, setToDos] = useState([]);
 
-  const addToDo = (e) => {
-    e.preventDefault()
-    setToDos([...toDos, inputValue])
+  const addToDo = async (e) => {
+    e.preventDefault();
+    setToDos([...toDos, inputValue]);
     setInputValue('');
+    // 입력창 초기화
+    await api.post('/todos',{
+      "id": 1,
+      "todo": inputValue,
+      "isCompleted": false,
+      "userId": toDos.findIndex((item)=>item===inputValue),
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err)=>console.log(err));
   } 
 
   return (
