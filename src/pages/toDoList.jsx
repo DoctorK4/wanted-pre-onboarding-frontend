@@ -18,17 +18,17 @@ function ToDoList () {
 
   const addToDo = async (e) => {
     e.preventDefault();
-    setToDos([...toDos, inputValue]);
-    setInputValue('');
     // 입력창 초기화
     await api.post('/todos',{
-      "id": 1,
+      "id": toDos.findIndex((item)=>item===inputValue),
       "todo": inputValue,
       "isCompleted": false,
-      "userId": toDos.findIndex((item)=>item===inputValue),
+      "userId": token,
     })
     .then((res) => {
       console.log(res);
+      setToDos([...toDos, inputValue]);
+      setInputValue('');
     })
     .catch((err)=>console.log(err));
   } 
