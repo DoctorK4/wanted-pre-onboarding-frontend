@@ -28,7 +28,7 @@ function ToDoList () {
     setToDos(response.data)
   }
 
-  // 서버에 새로 입력받은 todo를 post, toDos 갱신
+  // 새로 입력받은 todo를 서버에 post, 화면의 toDos 갱신
   const addToDo = async () => {
     const createNewToDo = {
       todo: inputValue,
@@ -36,7 +36,15 @@ function ToDoList () {
     }
     const response = await toDoAPI.post('./todos', createNewToDo);
     console.log(response);
-    getToDos();
+    await getToDos();
+  }
+
+  const setCheck = async (todo) => {
+    await toDoAPI.put(`./todos/${todo.id}`, {
+      todo : todo.todo,
+      isCompleted : !todo.isCompleted 
+    });
+    await getToDos();
   }
 
   // Side Effect 
@@ -44,9 +52,8 @@ function ToDoList () {
     if (token) {
       getToDos();
     }
-
     return
-  }, [toDos])
+  }, [])
 
   return (
     <>
@@ -59,9 +66,9 @@ function ToDoList () {
       : 
       <ul>
         {toDos.map((todo, index) => 
-        <li key={index}>
+        <li key={todo.id}>
           <label>
-            <input type="checkbox" checked={todo.isCompleted}/>
+            <input type="checkbox" checked={todo.isCompleted} onChange={() => setCheck(todo)}/>
             <span>{todo.todo}</span>
             <button data-testid="modify-button">수정</button>
             <button data-testid="delete-button">삭제</button>
