@@ -13,13 +13,8 @@ const toDoAPI = axios.create({
 
 function ToDoList () {
   // 상태 선언
-  // const [createToDo, setCreateToDo] = useState({
-  //   content: "",
-  //   iscompleted: false,
-  // });
   const [inputValue, setInputValue] = useState('');
   const [toDos, setToDos] = useState([]);
-
   
   // 서버에서 todo data를 받아와 toDos에 갱신
   const getToDos = async () => {
@@ -36,16 +31,25 @@ function ToDoList () {
     }
     const response = await toDoAPI.post('./todos', createNewToDo);
     console.log(response);
-    await getToDos();
+    getToDos();
   }
 
+  // todo 삭제
+  const deleteToDo = async (todo) => {
+    const response = await toDoAPI.delete(`./todos/${todo.id}`)
+    // console.log(response);
+    getToDos();
+  }
+
+  // 체크박스 변경
   const setCheck = async (todo) => {
     await toDoAPI.put(`./todos/${todo.id}`, {
       todo : todo.todo,
       isCompleted : !todo.isCompleted 
     });
-    await getToDos();
+    getToDos();
   }
+
 
   // Side Effect 
   useEffect(()=>{
@@ -71,7 +75,7 @@ function ToDoList () {
             <input type="checkbox" checked={todo.isCompleted} onChange={() => setCheck(todo)}/>
             <span>{todo.todo}</span>
             <button data-testid="modify-button">수정</button>
-            <button data-testid="delete-button">삭제</button>
+            <button data-testid="delete-button" onClick={() => deleteToDo(todo)}>삭제</button>
           </label>
         </li>
         )}
