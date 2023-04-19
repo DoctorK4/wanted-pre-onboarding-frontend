@@ -13,6 +13,7 @@ export default function ToDo({todo, deleteToDo, setCheck, getToDos}) {
     });
     console.log(response);
     getToDos();
+    setEditMode(false);
   }
 
   // 취소 버튼 이벤트 핸들러
