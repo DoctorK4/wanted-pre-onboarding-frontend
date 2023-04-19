@@ -5,7 +5,7 @@ import ToDo from '../components/ToDo';
 // API 통신에 필요한 설정 및 변수 선언
 const token = localStorage.getItem('token');
 const host = 'https://www.pre-onboarding-selection-task.shop/';
-const toDoAPI = axios.create({
+export const toDoAPI = axios.create({
   baseURL: host,
   headers: {
     'Content-Type' : 'application/json',
@@ -31,7 +31,7 @@ function ToDoList () {
       isCompleted : false
     }
     const response = await toDoAPI.post('./todos', createNewToDo);
-    await getToDos();
+    getToDos();
     console.log(response);
   }
   
@@ -67,7 +67,7 @@ function ToDoList () {
 
       <ul>
         {toDos.map((todo) => 
-          <ToDo todo={todo} deleteToDo={deleteToDo} setCheck={setCheck}/>
+          <ToDo key={todo.id} todo={todo} deleteToDo={deleteToDo} setCheck={setCheck} getTodos={getToDos}/>
         )}
       </ul>
     </>
