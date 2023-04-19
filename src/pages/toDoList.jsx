@@ -22,7 +22,6 @@ function ToDoList () {
     console.log(response);
     setToDos(response.data)
   }
-
   // 새로 입력받은 todo를 서버에 post, 화면의 toDos 갱신
   const addToDo = async () => {
     const createNewToDo = {
@@ -31,16 +30,15 @@ function ToDoList () {
     }
     const response = await toDoAPI.post('./todos', createNewToDo);
     console.log(response);
-    getToDos();
   }
-
+  
   // todo 삭제
   const deleteToDo = async (todo) => {
     const response = await toDoAPI.delete(`./todos/${todo.id}`)
-    // console.log(response);
+    console.log(response);
     getToDos();
   }
-
+  
   // 체크박스 변경
   const setCheck = async (todo) => {
     await toDoAPI.put(`./todos/${todo.id}`, {
@@ -49,15 +47,13 @@ function ToDoList () {
     });
     getToDos();
   }
-
-
+  
+  
   // Side Effect 
   useEffect(()=>{
-    if (token) {
-      getToDos();
-    }
-    return
-  }, [])
+    if (token) getToDos();
+    }, []
+  )
 
   return (
     <>
@@ -66,8 +62,6 @@ function ToDoList () {
         <button data-testid="new-todo-add-button" type="submit">추가</button>
       </form>
 
-      {toDos.length === 0 ? <p>todolist is empty</p> 
-      : 
       <ul>
         {toDos.map((todo, index) => 
         <li key={todo.id}>
@@ -79,7 +73,7 @@ function ToDoList () {
           </label>
         </li>
         )}
-      </ul>}
+      </ul>
     </>
 
   )
