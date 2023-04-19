@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios from "axios";
+import ToDo from '../components/ToDo';
 
+// API 통신에 필요한 설정 및 변수 선언
 const token = localStorage.getItem('token');
 const host = 'https://www.pre-onboarding-selection-task.shop/';
 const toDoAPI = axios.create({
@@ -19,8 +21,8 @@ function ToDoList () {
   // 서버에서 todo data를 받아와 toDos에 갱신
   const getToDos = async () => {
     const response = await toDoAPI.get('./todos')
+    setToDos(response.data);
     console.log(response);
-    setToDos(response.data)
   }
   // 새로 입력받은 todo를 서버에 post, 화면의 toDos 갱신
   const addToDo = async () => {
@@ -29,6 +31,7 @@ function ToDoList () {
       isCompleted : false
     }
     const response = await toDoAPI.post('./todos', createNewToDo);
+    await getToDos();
     console.log(response);
   }
   
@@ -54,7 +57,7 @@ function ToDoList () {
     if (token) getToDos();
     }, []
   )
-
+  
   return (
     <>
       <form onSubmit={addToDo}>
@@ -63,19 +66,11 @@ function ToDoList () {
       </form>
 
       <ul>
-        {toDos.map((todo, index) => 
-        <li key={todo.id}>
-          <label>
-            <input type="checkbox" checked={todo.isCompleted} onChange={() => setCheck(todo)}/>
-            <span>{todo.todo}</span>
-            <button data-testid="modify-button">수정</button>
-            <button data-testid="delete-button" onClick={() => deleteToDo(todo)}>삭제</button>
-          </label>
-        </li>
+        {toDos.map((todo) => 
+          <ToDo todo={todo} deleteToDo={deleteToDo} setCheck={setCheck}/>
         )}
       </ul>
     </>
-
   )
 }
 
