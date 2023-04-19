@@ -1,47 +1,42 @@
 import { useState } from "react"
+import { toDoAPI } from "../pages/toDoList";
 
-export default function ToDo({index, inputValue, toDos, setToDos, isCompleted}) {
-  const [edit, setEdit] = useState(false);
-  const [newToDo, setNewToDo ] = useState(inputValue);
-
-  // 수정모드 전환
-  const editToDo = (index) => {
-    toDos[index] = newToDo;
-    setToDos([...toDos]);
-    setEdit(false);
-  }
-  // todo 삭제
-  const deleteToDo = (index) => {
-    setToDos((toDos)=>{
-      return toDos.filter((prev, ind) => ind !== index);
+export default function ToDo({todo, deleteToDo, setCheck, getToDos}) {
+  
+  const [editMode, setEditMode] = useState(false);
+  const [newToDo, setNewToDo] = useState(todo.todo);
+  
+  const editToDo = async () => {
+    const response = await toDoAPI.put(`./todos/${todo.id}`, {
+      todo : newToDo,
+      isCompleted : todo.isCompleted 
     });
+    console.log(response);
+    getToDos();
   }
-  // 수정모드 종료 (수정취소)
+
+  // 취소 버튼 이벤트 핸들러
   const cancelEdit = () => {
-    setEdit(false)
-    setNewToDo(inputValue);
+    setEditMode(false);
+    setNewToDo(todo.todo);
   }
 
   return (
     <>
-      <li>
-        { !edit ? 
-        // 수정모드 전
-        <>
-          <label htmlFor="addToDo">
-            <input type="checkbox" id="addToDo" checked={isCompleted}/>
-            <span>{inputValue}</span>
+      <li key={todo.id}>
+        {!editMode ?        
+          <label>
+            <input type="checkbox" checked={todo.isCompleted} onChange={() => setCheck(todo)}/>
+            <span>{todo.todo}</span>
+            <button data-testid="modify-button" onClick={() => setEditMode(true)}>수정</button>
+            <button data-testid="delete-button" onClick={() => deleteToDo(todo)} type="button">삭제</button>
           </label>
-          <button data-testid="modify-button" onClick={()=>setEdit(true)}>수정</button>
-          <button data-testid="delete-button" onClick={()=> deleteToDo(index)}>삭제</button> 
-        </>
-        : 
-        // 수정모드 후
-        <form onSubmit={() => editToDo(index)} id="editForm">
-          <input data-testid="modify-input" value={newToDo} form="editForm" onChange={(e) => setNewToDo(e.target.value)}/>
-          <button data-testid="submit-button" type="submit">제출</button>
-          <button data-testid="cancel-button" type="button" onClick={cancelEdit}>취소</button>
-        </form> 
+          : 
+          <form key={todo.id} onSubmit={editToDo} id="editForm">
+            <input data-testid="modify-input" value={newToDo} form="editForm" onChange={(e)=>setNewToDo(e.target.value)}/>
+            <button data-testid="submit-button" type="submit">제출</button>
+            <button data-testid="cancel-button" type="button" onClick={cancelEdit}>취소</button>
+          </form>
         }
       </li>
     </>

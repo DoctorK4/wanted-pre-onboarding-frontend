@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import ToDo from '../components/ToDo';
 import axios from "axios";
+import ToDo from '../components/ToDo';
 
+// API 통신에 필요한 설정 및 변수 선언
 const token = localStorage.getItem('token');
 const host = 'https://www.pre-onboarding-selection-task.shop/';
-const api = axios.create({
+export const toDoAPI = axios.create({
   baseURL: host,
   headers: {
     'Content-Type' : 'application/json',
@@ -13,79 +14,61 @@ const api = axios.create({
 })
 
 function ToDoList () {
+  // 상태 선언
   const [inputValue, setInputValue] = useState('');
   const [toDos, setToDos] = useState([]);
-
-  // useEffect(()=>{
-  //   getToDos();
-  // },[])
-
-  // // DB에서 할일 목록을 가져오는 함수
-  // const getToDos = async () => {
-  //   let newdata = await api.get('/todos').then((res)=>res.data);
-  //   setToDos([...toDos, newdata]);
-    // .then((res)=> res.data.map(
-    //   (item, index) => 
-    //   <ToDo 
-    //     key={index} 
-    //     index={index} 
-    //     inputValue={item.todo} 
-    //     toDos={toDos} 
-    //     setToDos={setToDos} 
-    //     isCompleted={item.isCompleted}
-    //   />)
- 
-
-  const addToDo = async (e) => {
-    e.preventDefault();
-    // DB의 할일 목록 리스트에 새 할일 추가
-    await api.post('/todos',{
-      "id": toDos.findIndex((item)=>item===inputValue),
-      "todo": inputValue,
-      "isCompleted": false,
-    })
-    .then((res) => {
-      
-      setToDos([...toDos, inputValue]);
-
-      // 입력창 초기화
-      setInputValue('');
-    })
-    .catch((err)=>console.log(err));
-  } 
-
+  
+  // 서버에서 todo data를 받아와 toDos에 갱신
+  const getToDos = async () => {
+    const response = await toDoAPI.get('./todos')
+    setToDos(response.data);
+    console.log(response);
+  }
+  // 새로 입력받은 todo를 서버에 post, 화면의 toDos 갱신
+  const addToDo = async () => {
+    const createNewToDo = {
+      todo: inputValue,
+      isCompleted : false
+    }
+    const response = await toDoAPI.post('./todos', createNewToDo);
+    getToDos();
+    console.log(response);
+  }
+  
+  // todo 삭제
+  const deleteToDo = async (todo) => {
+    const response = await toDoAPI.delete(`./todos/${todo.id}`)
+    console.log(response);
+    getToDos();
+  }
+  
+  // 체크박스 변경
+  const setCheck = async (todo) => {
+    await toDoAPI.put(`./todos/${todo.id}`, {
+      todo : todo.todo,
+      isCompleted : !todo.isCompleted 
+    });
+    getToDos();
+  }
+  
+  
+  // Side Effect 
+  useEffect(()=>{
+    if (token) getToDos();
+    }, []
+  )
+  
   return (
     <>
       <form onSubmit={addToDo}>
-        <input 
-          data-testid="new-todo-input" 
-          type="text" 
-          placeholder="할일을 입력하세요" 
-          value={inputValue} 
-          onChange={(e) => setInputValue(e.target.value)}
-          />
-        <button 
-          data-testid="new-todo-add-button" 
-          type="submit"
-          disabled={(inputValue) ? false : true}
-        >
-          추가
-        </button>
+        <input data-testid="new-todo-input" value={inputValue} onChange={(e)=>setInputValue(e.target.value)}/>
+        <button data-testid="new-todo-add-button" type="submit">추가</button>
       </form>
+
       <ul>
-        {toDos.length === 0 ? 
-          <li>to-do-list is empty</li> 
-        : 
-          toDos.map((inputValue, index) => 
-            (<ToDo 
-              key={index} 
-              index={index} 
-              inputValue={inputValue} 
-              toDos={toDos} 
-              setToDos={setToDos} 
-            />)
-          )
-        }
+        {toDos.map((todo) => 
+          <ToDo key={todo.id} todo={todo} deleteToDo={deleteToDo} setCheck={setCheck} getTodos={getToDos}/>
+        )}
       </ul>
     </>
   )
