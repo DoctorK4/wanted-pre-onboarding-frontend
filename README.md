@@ -7,26 +7,23 @@
 **설치**
 
 > npm install
-> 
 
 실행
 
 > npm start
-> 
 
 ---
 
 ## 2. 테스트 계정
 
-> 아이디 : wantedtest@test.com <br/> 
+> 아이디 : wantedtest@test.com <br/>
 > 비밀번호 : testtest
- 
 
 ---
 
 ## 3. 사용 스택
 
-`Create-React-App` , `React-Router`, `Axios`
+`Create-React-App` , `React-Router`, `Axios`, `tailwind CSS`
 
 ## 4. 배포 주소
 

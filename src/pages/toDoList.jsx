@@ -1,77 +1,88 @@
-import { useEffect, useState } from 'react'
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import ToDo from '../components/ToDo';
+import '../index.css';
 
-// API 통신에 필요한 설정 및 변수 선언
 const token = localStorage.getItem('token');
 const host = 'https://www.pre-onboarding-selection-task.shop/';
+
 export const toDoAPI = axios.create({
   baseURL: host,
   headers: {
-    'Content-Type' : 'application/json',
-    Authorization : `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
   },
-})
+});
 
-function ToDoList () {
-  // 상태 선언
+function ToDoList() {
   const [inputValue, setInputValue] = useState('');
   const [toDos, setToDos] = useState([]);
-  
-  // 서버에서 todo data를 받아와 toDos에 갱신
   const getToDos = async () => {
-    const response = await toDoAPI.get('./todos')
+    const response = await toDoAPI.get('./todos');
     setToDos(response.data);
     console.log(response);
-  }
-  // 새로 입력받은 todo를 서버에 post, 화면의 toDos 갱신
+  };
+
   const addToDo = async () => {
     const createNewToDo = {
       todo: inputValue,
-      isCompleted : false
-    }
+      isCompleted: false,
+    };
     const response = await toDoAPI.post('./todos', createNewToDo);
     getToDos();
     console.log(response);
-  }
-  
-  // todo 삭제
-  const deleteToDo = async (todo) => {
-    const response = await toDoAPI.delete(`./todos/${todo.id}`)
+  };
+
+  const deleteToDo = async todo => {
+    const response = await toDoAPI.delete(`./todos/${todo.id}`);
     console.log(response);
     getToDos();
-  }
-  
-  // 체크박스 변경
-  const setCheck = async (todo) => {
+  };
+
+  const setCheck = async todo => {
     await toDoAPI.put(`./todos/${todo.id}`, {
-      todo : todo.todo,
-      isCompleted : !todo.isCompleted 
+      todo: todo.todo,
+      isCompleted: !todo.isCompleted,
     });
     getToDos();
-  }
-  
-  
-  // Side Effect 
-  useEffect(()=>{
+  };
+
+  useEffect(() => {
     if (token) getToDos();
-    }, []
-  )
-  
+  }, []);
+
   return (
-    <>
-      <form onSubmit={addToDo}>
-        <input data-testid="new-todo-input" value={inputValue} onChange={(e)=>setInputValue(e.target.value)}/>
-        <button data-testid="new-todo-add-button" type="submit">추가</button>
+    <div className="bg-cyan-50 p-3 max-w-md mx-auto">
+      <form onSubmit={addToDo} className="mt-4 flex text-center">
+        <input
+          data-testid="new-todo-input"
+          value={inputValue}
+          className="bg-transparent w-60 mr-20 border-b-2 border-gray-500 text-black ml-3 pl-2"
+          placeholder="Insert todo"
+          onChange={e => setInputValue(e.target.value)}
+        />
+        <button
+          data-testid="new-todo-add-button"
+          type="submit"
+          className="ml-5 border-2 border-green-500 p-2 text-green-500 hover:text-white hover:bg-green-500 rounded-lg flex"
+        >   
+          추가
+        </button>
       </form>
 
-      <ul>
-        {toDos.map((todo) => 
-          <ToDo key={todo.id} todo={todo} deleteToDo={deleteToDo} setCheck={setCheck} getTodos={getToDos}/>
-        )}
+      <ul className="flex flex-col">
+        {toDos.map(todo => (
+          <ToDo
+            key={todo.id}
+            todo={todo}
+            deleteToDo={deleteToDo}
+            setCheck={setCheck}
+            getTodos={getToDos}
+          />
+        ))}
       </ul>
-    </>
-  )
+    </div>
+  );
 }
 
 export default ToDoList;
