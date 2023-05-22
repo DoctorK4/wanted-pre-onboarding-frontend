@@ -14,7 +14,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />}></Route>
+          <Route path="/" element={token ? <Navigate to="/todo" /> : <SignIn />}></Route>
           <Route path="/signup" element={token ? <Navigate to="/todo" /> : <SignUp />}></Route>
           <Route path="/signin" element={token ? <Navigate to="/todo" /> : <SignIn />}></Route>
           <Route path="/todo" element={!token ? <Navigate to="/signin" /> : <ToDoList />}></Route>
