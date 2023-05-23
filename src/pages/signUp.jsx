@@ -1,24 +1,18 @@
-import axios from 'axios';
+import { useNavigate } from 'react-router';
+import { signUp } from '../apis/auth';
 import { useState } from 'react';
-
-const host = 'https://www.pre-onboarding-selection-task.shop/';
-const api = axios.create({
-  baseURL: host,
-  Headers: {
-    'Content-Type': 'application/json',
-  },
-});
 
 function SignUp() {
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const validatePassword = e => {
+    const MINIMUM_PW_LENGTH = 8;
     setPassword(e.target.value);
-
-    if (e.target.value.length >= 8) {
+    if (e.target.value.length >= MINIMUM_PW_LENGTH) {
       setValidPassword(true);
     } else {
       setValidPassword(false);
@@ -27,7 +21,6 @@ function SignUp() {
 
   const validateEmail = e => {
     setEmail(e.target.value);
-
     if (e.target.value.includes('@')) {
       setValidEmail(true);
     } else {
@@ -35,17 +28,12 @@ function SignUp() {
     }
   };
 
-  const register = async () => {
-    await api
-      .post('/auth/signup', {
-        email,
-        password,
-      })
-      .then(res => {
-        console.log(res);
-        window.location.replace('/signin');
-      })
-      .catch(err => console.log(err));
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const response = await signUp(email, password);
+    if (response.status === 201){
+      navigate('/signin');
+    }
   };
 
   return (
@@ -76,7 +64,7 @@ function SignUp() {
         className="mt-5 py-2 px-4 bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
         data-testid="signup-button"
         disabled={!(validEmail && validPassword)}
-        onClick={register}
+        onClick={handleSubmit}
       >
         회원가입
       </button>
