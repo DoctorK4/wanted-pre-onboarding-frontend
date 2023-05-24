@@ -13,3 +13,16 @@ export const signUp = async (email, password) => {
   }
 };
 
+export const signIn = async (email, password) => {
+  try {
+    const response = await api.post('/auth/signin', {
+      email,
+      password,
+    });
+    console.log(response);
+    return response
+  } catch (error) {
+    console.log(error);
+    alert(error.response?.data?.message)
+  }
+};
