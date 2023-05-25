@@ -1,54 +1,35 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import ToDo from '../components/ToDo';
 import '../index.css';
-
-const token = localStorage.getItem('token');
-const host = 'https://www.pre-onboarding-selection-task.shop/';
-
-export const toDoAPI = axios.create({
-  baseURL: host,
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  },
-});
+import { toDoApi } from '../apis/todo';
+import { getToken } from '../util/getToken';
 
 function ToDoList() {
   const [inputValue, setInputValue] = useState('');
   const [toDos, setToDos] = useState([]);
   const getToDos = async () => {
-    const response = await toDoAPI.get('./todos');
+    const response = await toDoApi.fetchTodo();
     setToDos(response.data);
     console.log(response);
   };
 
   const addToDo = async () => {
-    const createNewToDo = {
-      todo: inputValue,
-      isCompleted: false,
-    };
-    const response = await toDoAPI.post('./todos', createNewToDo);
+    await toDoApi.createTodo(inputValue);
     getToDos();
-    console.log(response);
   };
 
   const deleteToDo = async todo => {
-    const response = await toDoAPI.delete(`./todos/${todo.id}`);
-    console.log(response);
+    await toDoApi.deleteTodo(todo.id);
     getToDos();
   };
 
   const setCheck = async todo => {
-    await toDoAPI.put(`./todos/${todo.id}`, {
-      todo: todo.todo,
-      isCompleted: !todo.isCompleted,
-    });
+    await toDoApi.updateTodo(todo.id, todo.todo, !todo.isCompleted)
     getToDos();
   };
 
   useEffect(() => {
-    if (token) getToDos();
+    if (getToken) getToDos();
   }, []);
 
   return (

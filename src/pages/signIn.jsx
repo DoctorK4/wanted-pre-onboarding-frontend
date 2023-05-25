@@ -20,7 +20,6 @@ function SignIn() {
   
   const validateEmail = e => {
     setEmail(e.target.value);
-    
     if (e.target.value.includes('@')) {
       setValidEmail(true);
     } else {

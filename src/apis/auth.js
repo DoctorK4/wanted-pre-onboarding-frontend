@@ -1,8 +1,8 @@
-import { api } from "./axiosInstance";
+import { authInstance } from "./axiosInstance";
 
 export const signUp = async (email, password) => {
   try {
-    const response = await api.post('/auth/signup', {
+    const response = await authInstance.post('/auth/signup', {
       email,
       password,
     });  
@@ -15,7 +15,7 @@ export const signUp = async (email, password) => {
 
 export const signIn = async (email, password) => {
   try {
-    const response = await api.post('/auth/signin', {
+    const response = await authInstance.post('/auth/signin', {
       email,
       password,
     });

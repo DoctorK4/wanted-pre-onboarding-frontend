@@ -1,16 +1,12 @@
 import { useState } from 'react';
-import { toDoAPI } from '../pages/toDoList';
+import { toDoApi } from '../apis/todo';
 
 export default function ToDo({ todo, deleteToDo, setCheck, getToDos }) {
   const [editMode, setEditMode] = useState(false);
   const [newToDo, setNewToDo] = useState(todo.todo);
 
   const editToDo = async () => {
-    const response = await toDoAPI.put(`./todos/${todo.id}`, {
-      todo: newToDo,
-      isCompleted: todo.isCompleted,
-    });
-    console.log(response);
+    await toDoApi.updateTodo(todo.id, newToDo, todo.isCompleted);
     getToDos();
     setEditMode(false);
   };
