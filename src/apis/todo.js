@@ -16,7 +16,7 @@ export const toDoApi = {
     const response = await toDoInstance.delete(`./todos/${todoId}`);
     return response;
   },
-  updateTodo: async (todoid, newTodo, todoisCompleted, ) => {
+  updateTodo: async ( todoid, newTodo, todoisCompleted ) => {
     const response = await toDoInstance.put(`./todos/${todoid}`, {
       todo: newTodo,
       isCompleted: todoisCompleted,
